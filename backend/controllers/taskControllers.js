@@ -131,4 +131,24 @@ const getFilteredAndSearchedTasks = asyncHandler(async (req, res) => {
     }
 });
 
-module.exports = { createTask, updateTask, getTasks, taskStatus, getFilteredAndSearchedTasks }
+const deleteTask = asyncHandler(async (req, res) => {
+    const taskId = req.params.id;
+
+    try {
+        const task = await Task.findOne({ _id: taskId, createdBy: req.user._id });
+
+        if (!task) {
+            res.status(404);
+            throw new Error('Task not found or does not belong to the user');
+        }
+
+        await Task.findByIdAndDelete(taskId);
+
+        res.status(200).json({ message: 'Task deleted successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error deleting task', error });
+    }
+});
+
+module.exports = { createTask, updateTask, getTasks, taskStatus, getFilteredAndSearchedTasks, deleteTask }
