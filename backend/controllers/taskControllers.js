@@ -107,7 +107,8 @@ const taskStatus = asyncHandler(async (req, res) => {
 
 const getFilteredAndSearchedTasks = asyncHandler(async (req, res) => {
     const { status, title } = req.query;
-    let query = {};
+    const userId = req.user._id;
+    let query = { createdBy: userId };
 
     // If status is provided, filter tasks by status
     if (status) {
