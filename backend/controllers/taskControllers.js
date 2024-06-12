@@ -95,7 +95,7 @@ const taskStatus = asyncHandler(async (req, res) => {
 });
 
 const getFilteredAndSearchedTasks = asyncHandler(async (req, res) => {
-    const { status, title } = req.query;
+    const { status, title, sortField, sortOrder, priorityOrder } = req.query;
     const userId = req.user._id;
     let query = { createdBy: userId };
 
@@ -109,10 +109,27 @@ const getFilteredAndSearchedTasks = asyncHandler(async (req, res) => {
         query.title = { $regex: title, $options: 'i' };
     }
 
+    // Determine sort options
+    let sortOptions = {};
+    if (sortField) {
+        sortOptions[sortField] = sortOrder === 'desc' ? -1 : 1;
+    }
+
+
     try {
         const user = await User.findById(req.user._id).select('name');
         // Find tasks based on the query
-        const tasks = await Task.find(query);
+        const tasks = await Task.find(query).sort(sortOptions);
+
+        // Sort tasks by priority
+        if (priorityOrder) {
+            tasks.sort((a, b) => {
+                const priorityValues = ['low', 'medium', 'high'];
+                const priorityA = priorityValues.indexOf(a.priority);
+                const priorityB = priorityValues.indexOf(b.priority);
+                return priorityOrder === 'asc' ? priorityA - priorityB : priorityB - priorityA;
+            });
+        }
 
         res.status(200).json({
             user: user.name,
