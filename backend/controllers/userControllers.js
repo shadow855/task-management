@@ -63,11 +63,10 @@ const authUser = asyncHandler(async (req, res) => {
     }
 });
 
-const allUsers = asyncHandler(async (req, res) => {
-    const users = await User.find();
-
-    res.status(201).send(users);
-})
+const loggedUser = asyncHandler(async (req, res) => {
+    const user = await User.findOne(req.user._id).select('-password');
+    res.status(201).send(user);
+});
 
 const updateProfile = asyncHandler(async (req, res) => {
     const { name, password } = req.body;
@@ -100,4 +99,4 @@ const updateProfile = asyncHandler(async (req, res) => {
     }
 });
 
-module.exports = { registerUser, authUser, allUsers, updateProfile };
+module.exports = { registerUser, authUser, loggedUser, updateProfile };
