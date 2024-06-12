@@ -44,22 +44,6 @@ const createTask = asyncHandler(async (req, res) => {
     }
 });
 
-const getTasks = asyncHandler(async (req, res) => {
-    try {
-        const user = await User.findById(req.user._id).select('name');
-
-        const tasks = await Task.find({ createdBy: req.user._id });
-
-        res.status(200).json({
-            user: user.name,
-            tasks: tasks
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error retrieving tasks', error });
-    }
-});
-
 const updateTask = asyncHandler(async (req, res) => {
     const taskId = req.params.id;
     const { title, description, priority } = req.body;
@@ -126,10 +110,14 @@ const getFilteredAndSearchedTasks = asyncHandler(async (req, res) => {
     }
 
     try {
+        const user = await User.findById(req.user._id).select('name');
         // Find tasks based on the query
-        const tasks = await Task.find(query).populate('createdBy', 'name');
+        const tasks = await Task.find(query);
 
-        res.status(200).json(tasks);
+        res.status(200).json({
+            user: user.name,
+            tasks: tasks
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Error retrieving tasks', error });
@@ -156,4 +144,4 @@ const deleteTask = asyncHandler(async (req, res) => {
     }
 });
 
-module.exports = { createTask, updateTask, getTasks, taskStatus, getFilteredAndSearchedTasks, deleteTask }
+module.exports = { createTask, updateTask, taskStatus, getFilteredAndSearchedTasks, deleteTask }
