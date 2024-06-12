@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const Task = require('../models/taskModel');
+const User = require('../models/userModel');
 
 const createTask = asyncHandler(async (req, res) => {
     const { title, description, status, priority } = req.body;
@@ -45,10 +46,14 @@ const createTask = asyncHandler(async (req, res) => {
 
 const getTasks = asyncHandler(async (req, res) => {
     try {
-        const tasks = await Task.find({ createdBy: req.user._id })
-            .populate('createdBy', 'name');
+        const user = await User.findById(req.user._id).select('name');
 
-        res.status(200).json(tasks);
+        const tasks = await Task.find({ createdBy: req.user._id });
+
+        res.status(200).json({
+            user: user.name,
+            tasks: tasks
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Error retrieving tasks', error });
