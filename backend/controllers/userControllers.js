@@ -69,4 +69,35 @@ const allUsers = asyncHandler(async (req, res) => {
     res.status(201).send(users);
 })
 
-module.exports = { registerUser, authUser, allUsers };
+const updateProfile = asyncHandler(async (req, res) => {
+    const { name, password } = req.body;
+
+    try {
+        const user = await User.findOne(req.user._id);
+
+        if (!user) {
+            res.status(404);
+            throw new Error('User not found');
+        }
+
+        const updateFields = {};
+        if (name) updateFields.name = name;
+        if (password) {
+            const salt = await bcrypt.genSalt(10);
+            updateFields.password = await bcrypt.hash(password, salt);
+        }
+
+        const updatedUser = await User.findByIdAndUpdate(
+            req.user._id,
+            { $set: updateFields },
+            { new: true, runValidators: true }
+        );
+
+        res.status(200).json(updatedUser);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error updating user', error });
+    }
+});
+
+module.exports = { registerUser, authUser, allUsers, updateProfile };
