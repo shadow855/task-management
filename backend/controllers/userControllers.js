@@ -85,6 +85,7 @@ const updateProfile = asyncHandler(async (req, res) => {
             throw new Error('User not found');
         }
 
+        //updating name/password if provided and if not then just keep the same credentials
         const updateFields = {};
         if (name) updateFields.name = name;
         if (password) {
