@@ -8,7 +8,6 @@ const cors = require("cors");
 const { errorHandler } = require('./middleware/errorMiddleware');
 
 dotenv.config();
-connectDB();
 const app = express();
 
 app.use(express.json());
@@ -28,4 +27,15 @@ app.get('/', (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, console.log(`API Running on PORT : ${PORT}`.cyan.bold));
+const startServer = async () => {
+    try {
+        await connectDB();
+        app.listen(PORT, () => {
+            console.log(`Server running on port ${PORT}`.cyan.bold)
+        });
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+startServer();
