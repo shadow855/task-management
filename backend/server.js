@@ -13,6 +13,7 @@ const app = express();
 
 app.use(express.json());
 
+//connecting backend and frontend using cors
 app.use(cors({
     origin: ["http://localhost:3000", "https://task-management-web-app-fzjf.onrender.com"]
 }));

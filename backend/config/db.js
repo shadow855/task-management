@@ -1,3 +1,5 @@
+// for database connection
+
 const mongoose = require('mongoose');
 const colors = require("colors");
 

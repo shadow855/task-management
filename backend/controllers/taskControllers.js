@@ -1,7 +1,10 @@
+//controller for handling tasks
+
 const asyncHandler = require('express-async-handler');
 const Task = require('../models/taskModel');
 const User = require('../models/userModel');
 
+//add task for authentic user
 const createTask = asyncHandler(async (req, res) => {
     const { title, description, status, priority } = req.body;
 
@@ -44,6 +47,7 @@ const createTask = asyncHandler(async (req, res) => {
     }
 });
 
+//update the task title/description/priority for authentic user
 const updateTask = asyncHandler(async (req, res) => {
     const taskId = req.params.id;
     const { title, description, priority } = req.body;
@@ -70,6 +74,7 @@ const updateTask = asyncHandler(async (req, res) => {
     }
 });
 
+//set task status to pending/completed for authentic user
 const taskStatus = asyncHandler(async (req, res) => {
     const taskId = req.params.id;
     const { status } = req.body;
@@ -94,6 +99,7 @@ const taskStatus = asyncHandler(async (req, res) => {
     }
 });
 
+// get tasks based on filter/search/sortbydate/sortby priority for authentic user
 const getFilteredAndSearchedTasks = asyncHandler(async (req, res) => {
     const { status, title, sortField, sortOrder, priorityOrder } = req.query;
     const userId = req.user._id;
@@ -141,6 +147,7 @@ const getFilteredAndSearchedTasks = asyncHandler(async (req, res) => {
     }
 });
 
+//delete the task for authentic user
 const deleteTask = asyncHandler(async (req, res) => {
     const taskId = req.params.id;
 

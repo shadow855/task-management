@@ -1,8 +1,11 @@
+//controller for handling users
+
 const asyncHandler = require("express-async-handler");
 const User = require('../models/userModel');
 const generateToken = require("../config/generateToken");
 const bcrypt = require('bcryptjs');
 
+//register the user
 const registerUser = asyncHandler(async (req, res) => {
     const { name, email, password } = req.body;
 
@@ -39,6 +42,7 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 });
 
+//log in the registered user only
 const authUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
@@ -63,11 +67,13 @@ const authUser = asyncHandler(async (req, res) => {
     }
 });
 
+//get details-name/email of logged in user only
 const loggedUser = asyncHandler(async (req, res) => {
     const user = await User.findOne(req.user._id).select('-password');
     res.status(201).send(user);
 });
 
+//update name/password of logged in user only
 const updateProfile = asyncHandler(async (req, res) => {
     const { name, password } = req.body;
 

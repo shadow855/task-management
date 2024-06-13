@@ -1,3 +1,5 @@
+//generating token for authenticating user
+
 const jwt = require('jsonwebtoken');
 
 const generateToken = (id) => {
